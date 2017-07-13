@@ -11,9 +11,9 @@ public class wheelspiner : MonoBehaviour {
 	private float SpinX = 0, SpinY = 0, SpinZ = 0;
 	// Use this for initialization
 	void Start () {
-		RandX = Random.Range (-8.0f, 8.0f);
-		RandY = Random.Range (-8.0f, 8.0f);
-		RandZ = Random.Range (-8.0f, 8.0f);
+		RandX = Random.Range (-3.0f, 3.0f);
+		RandY = Random.Range (-3.0f, 3.0f);
+		RandZ = Random.Range (-3.0f, 3.0f);
 	}
 	
 	// Update is called once per frame
@@ -22,9 +22,9 @@ public class wheelspiner : MonoBehaviour {
 		changSP += Time.deltaTime;
 		if (changTime < changSP) {
 			changSP = 0;
-			RandX = Random.Range (-8.0f, 8.0f);
-			RandY = Random.Range (-8.0f, 8.0f);
-			RandZ = Random.Range (-8.0f, 8.0f);
+			RandX = Random.Range (-3.0f, 3.0f);
+			RandY = Random.Range (-3.0f, 3.0f);
+			RandZ = Random.Range (-3.0f, 3.0f);
 		}
 		transform.Rotate(new Vector3(SpinX, SpinY, SpinZ));
 		SpinX += (RandX-SpinX)*(Time.deltaTime / changTime);

@@ -22,8 +22,6 @@ public class MainGameSp : MonoBehaviour {
 	float CameraTall;//カメラの高さ 登るんすよこのカメラ
 
 	GameObject TopCam;
-	GameObject LeftCam;
-	GameObject RightCam;
 
 	public GameObject[] Boxpre;//フィールドの横に出てくる今落とそうとしてる箱の色を示すアレ
 
@@ -35,7 +33,7 @@ public class MainGameSp : MonoBehaviour {
 
 
 	public GameObject setflash;
-	public GameObject Crash; //クラアアアアアアアアアッシュ！！！！！箱が弾けるエフェクト！！！
+	public GameObject[] Crash; //クラアアアアアアアアアッシュ！！！！！箱が弾けるエフェクト！！！
 	public Material[] CrashMat;
 
 	public GameObject UIBar;
@@ -83,6 +81,10 @@ public class MainGameSp : MonoBehaviour {
 	public GameObject COMBOTEXT;
 
 
+	private int LookShift = 0;
+	bool leftseting = true;
+	bool rightseting = true;
+
 	private int[,] makerLim = new int[5,2] {//箱を置く場所を示す場所の2つ目の箱を指示するためだけの配列 これが楽だったもので・・・
 		{0,1},{1,0},{0,-1},{-1,0},{0,0}
 	};
@@ -100,6 +102,7 @@ public class MainGameSp : MonoBehaviour {
 		new Vector3(-1f,0f,0f)
 	};
 
+	private Vector3 defaltSet = new Vector3 (-3f, 1f, -3f);
 
 	public int DelBoxCheak = 3;
 
@@ -114,11 +117,7 @@ public class MainGameSp : MonoBehaviour {
 		flooa = GameObject.Find ("flooa");
 
 		TopCam = GameObject.Find ("TopCamera");
-		LeftCam = GameObject.Find ("LeftbackCamera");
-		RightCam = GameObject.Find ("RightbackCamera");
 		TopCam.SetActive (false);
-		LeftCam.SetActive (false);
-		RightCam.SetActive (false);
 
 		CameraTall = TopCam.transform.position.y;
 
@@ -185,12 +184,13 @@ public class MainGameSp : MonoBehaviour {
 			}
 		}
 		ComboBar.anchorMax = new Vector2(1 - ComboLimitCount / ComboLimiter,ComboBar.anchorMax.y);
+
 		if (Droping) {//プレイヤーが操作しても大丈夫か確認
 			if (Input.GetButton ("Fire1")) {//マウスをクリックか画面をタップ中か確認 そのままだとスマホで不具合起こしそう
 				mark[0].SetActive(false);
 				mark[1].SetActive(false);
 				LookTower-=Input.GetAxis ("Mouse Y");//マウスを上下に動かす
-				flooa.transform.Rotate (new Vector3 (0f, Input.GetAxis("Mouse X") * 5f, 0f));
+//				flooa.transform.Rotate (new Vector3 (0f, Input.GetAxis("Mouse X") * 5f, 0f));
 				if (LookTower < 0)LookTower = 0;
 				if (LookTower > 12)LookTower = 12;
 				if(Input.GetAxisRaw ("Vertical") > 0){
@@ -198,6 +198,25 @@ public class MainGameSp : MonoBehaviour {
 				}else{
 					TopCam.SetActive (false);
 				}
+
+				if (Input.GetAxisRaw ("Horizontal") > 0 && rightseting) {
+					flooa.transform.Rotate (new Vector3 (0f, 90f, 0f));
+					rightseting = false;
+					LookShift--;
+
+				} 
+				if (Input.GetAxisRaw ("Horizontal") < 0 && leftseting) {
+					flooa.transform.Rotate (new Vector3 (0f, -90f, 0f));
+					leftseting = false;
+					LookShift++;
+				}
+				if (LookShift > 3)LookShift = 0;
+				if (LookShift < 0)LookShift = 3;
+				if(Input.GetAxisRaw ("Horizontal") == 0 ){
+					leftseting = true;
+					rightseting = true;
+				}
+
 			} else {
 				Quaternion deltaflooa =flooa.transform.rotation;
 				TopCam.SetActive (false);
@@ -205,7 +224,7 @@ public class MainGameSp : MonoBehaviour {
 				mark[1].SetActive(true);
 				LookTower = 0;
 			//	flooa.transform.rotation =new Quaternion(deltaflooa.x,deltaflooa.y /( Time.deltaTime *3),deltaflooa.z,0);
-				flooa.transform.rotation =new Quaternion(0,0,0,0);
+//				flooa.transform.rotation =new Quaternion(0,0,0,0);
 				if (Input.anyKeyDown) {
 					posSet ();
 				}
@@ -280,8 +299,11 @@ public class MainGameSp : MonoBehaviour {
 							BoxStorage[i,posX,posZ] = (GameObject)Instantiate (
 								Boxpre[stage [i, posX, posZ]-1],
 								new Vector3((float)posX,(float)i,(float)posZ),
-								Quaternion.identity);
+								flooa.transform.rotation);
 							BoxStorage[i,posX,posZ].transform.parent = flooa.transform;
+							BoxStorage[i,posX,posZ].transform.localPosition = defaltSet + new Vector3((float)posX,(float)i,(float)posZ);
+							BoxStorage[i,posX,posZ].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
+
 							break;
 						}
 					}
@@ -293,8 +315,10 @@ public class MainGameSp : MonoBehaviour {
 							BoxStorage[i,posX,posZ] = (GameObject)Instantiate (
 								Boxpre[stage [i, posX, posZ]-1],
 								new Vector3((float)posX,(float)i,(float)posZ),
-								Quaternion.identity);
+								flooa.transform.rotation);
 							BoxStorage[i,posX,posZ].transform.parent = flooa.transform;
+							BoxStorage[i,posX,posZ].transform.localPosition = defaltSet + new Vector3((float)posX,(float)i,(float)posZ);
+							BoxStorage[i,posX,posZ].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
 							break;
 						}
 					}
@@ -308,8 +332,10 @@ public class MainGameSp : MonoBehaviour {
 							BoxStorage[i,posX,posZ] = (GameObject)Instantiate (
 								Boxpre[stage [i, posX, posZ]-1],
 								new Vector3((float)posX,(float)i,(float)posZ),
-								Quaternion.identity);
+								flooa.transform.rotation);
 							BoxStorage[i,posX,posZ].transform.parent = flooa.transform;
+							BoxStorage[i,posX,posZ].transform.localPosition = defaltSet + new Vector3((float)posX,(float)i,(float)posZ);
+							BoxStorage[i,posX,posZ].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
 							break;
 						}
 					}
@@ -321,8 +347,10 @@ public class MainGameSp : MonoBehaviour {
 							BoxStorage[i,posX,posZ] = (GameObject)Instantiate (
 								Boxpre[stage [i, posX, posZ]-1],
 								new Vector3((float)posX,(float)i,(float)posZ),
-								Quaternion.identity);
+								flooa.transform.rotation);
 							BoxStorage[i,posX,posZ].transform.parent = flooa.transform;
+							BoxStorage[i,posX,posZ].transform.localPosition = defaltSet + new Vector3((float)posX,(float)i,(float)posZ);
+							BoxStorage[i,posX,posZ].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
 							break;
 						}
 					}
@@ -337,8 +365,10 @@ public class MainGameSp : MonoBehaviour {
 							BoxStorage[i,posX,posZ] = (GameObject)Instantiate (
 								Boxpre[stage [i, posX, posZ]-1],
 								new Vector3((float)posX,(float)i,(float)posZ),
-								Quaternion.identity);
+								flooa.transform.rotation);
 							BoxStorage[i,posX,posZ].transform.parent = flooa.transform;
+							BoxStorage[i,posX,posZ].transform.localPosition = defaltSet + new Vector3((float)posX,(float)i,(float)posZ);
+							BoxStorage[i,posX,posZ].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
 							break;
 						}
 					}
@@ -350,19 +380,16 @@ public class MainGameSp : MonoBehaviour {
 							BoxStorage[i,posX+makerLim[makerSpin,0],posZ+makerLim[makerSpin,1]] = (GameObject)Instantiate (
 								Boxpre[stage [i, posX+makerLim[makerSpin,0], posZ+makerLim[makerSpin,1]]-1],
 								new Vector3((float)posX,(float)i,(float)posZ)+setB[makerSpin],
-								Quaternion.identity);
+								flooa.transform.rotation);
 							BoxStorage[i,posX+makerLim[makerSpin,0],posZ+makerLim[makerSpin,1]].transform.parent = flooa.transform;
+							BoxStorage[i,posX+makerLim[makerSpin,0],posZ+makerLim[makerSpin,1]].transform.localPosition = defaltSet + new Vector3((float)posX+makerLim[makerSpin,0],(float)i,(float)posZ+makerLim[makerSpin,1]);
+							BoxStorage[i,posX+makerLim[makerSpin,0],posZ+makerLim[makerSpin,1]].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
 							break;
 						}
 					}
 				}
 					break;
 				}
-
-
-
-
-
 
 			Cdrop2 ();
 			StartCoroutine("stagecheck");
@@ -379,21 +406,56 @@ public class MainGameSp : MonoBehaviour {
 		}
 		if (Input.GetAxisRaw ("Vertical") != 0 || Input.GetAxisRaw ("Horizontal") != 0) {
 
-			posZ += (int)Input.GetAxisRaw ("Horizontal");
-			if(posZ+makerLim[Limnum,1] < 0 || posZ < 0){
-				posZ++;
-			}else if(posZ+makerLim[Limnum,1] > 6 || posZ > 6){
-				posZ--;
+
+
+			switch(LookShift){
+			case 0:
+				Horizontalmove ((int)Input.GetAxisRaw ("Horizontal"),Limnum);
+				Verticalmove ((int)Input.GetAxisRaw ("Vertical")*-1,Limnum);
+				break;
+			case 1:
+				Horizontalmove ((int)Input.GetAxisRaw ("Vertical"),Limnum);
+				Verticalmove ((int)Input.GetAxisRaw ("Horizontal"),Limnum);
+				break;
+			case 2:
+				Horizontalmove ((int)Input.GetAxisRaw ("Horizontal")*-1,Limnum);
+				Verticalmove ((int)Input.GetAxisRaw ("Vertical"),Limnum);
+				break;
+			case 3:
+				Horizontalmove ((int)Input.GetAxisRaw ("Vertical")*-1,Limnum);
+				Verticalmove ((int)Input.GetAxisRaw ("Horizontal")*-1,Limnum);
+				break;
+			default:
+				break;
 			}
 
-			posX += (int)Input.GetAxisRaw ("Vertical")*-1;
-			if(posX+makerLim[Limnum,0] < 0 || posX < 0){
-				posX++;
-			}else if(posX+makerLim[Limnum,0] > 6 || posX > 6){
-				posX--;
-			}
+
+
 		}
 	}
+
+	void Horizontalmove(int Raw,int Lim){
+		posZ += Raw;
+		if(posZ+makerLim[Lim,1] < 0 || posZ < 0){
+			posZ++;
+		}else if(posZ+makerLim[Lim,1] > 6 || posZ > 6){
+			posZ--;
+		}
+	}
+
+	void Verticalmove(int Raw,int Lim){
+		posX += Raw;
+		if(posX+makerLim[Lim,0] < 0 || posX < 0){
+			posX++;
+		}else if(posX+makerLim[Lim,0] > 6 || posX > 6){
+			posX--;
+		}
+	}
+
+	void PullBox(int X,int Y,int Z){
+		
+	}
+
 
 
 	void Dspin2 (){
@@ -646,13 +708,12 @@ public class MainGameSp : MonoBehaviour {
 					for (int X = 0; X < 7; X++) {
 						for (int Z = 0; Z < 7; Z++) {
 							if(Cstage[Y,X,Z]){
-								stage[Y,X,Z]=0;
+								
 							//	DelWhiteDown(X,Y,Z);
 							//	DelWhiteMulch(X,Y,Z);
 								DoubleRate = DoubleRate * DoubleDelRate;
 
-								BoxStorage[Y,X,Z].GetComponent<Renderer>().material=CrashMat[0];
-
+								BoxStorage[Y,X,Z].GetComponent<Renderer>().material=CrashMat[stage[Y,X,Z]-1];
 								DelBox++;
 								sCt++;
 							} 
@@ -679,7 +740,8 @@ public class MainGameSp : MonoBehaviour {
 					for (int X = 0; X < 7; X++) {
 						for (int Z = 0; Z < 7; Z++) {
 							if(Cstage[Y,X,Z]){
-								StartCoroutine(CRASHBOX(X,Y,Z));
+								StartCoroutine(CRASHBOX(X,Y,Z,stage[Y,X,Z]-1));
+								stage[Y,X,Z]=0;
 							} 
 						}
 					}
@@ -722,8 +784,10 @@ public class MainGameSp : MonoBehaviour {
 								BoxStorage[Y,X,Z] = (GameObject)Instantiate (
 									Boxpre[stage [Y, X, Z]-1],
 									new Vector3((float)X,(float)Y,(float)Z),
-									Quaternion.identity);
+									flooa.transform.rotation);
 								BoxStorage[Y,X,Z].transform.parent = flooa.transform;
+								BoxStorage[Y,X,Z].transform.localPosition = defaltSet + new Vector3((float)X,(float)Y,(float)Z);
+								BoxStorage[Y,X,Z].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
 							}
 						
 							
@@ -750,8 +814,10 @@ public class MainGameSp : MonoBehaviour {
 							BoxStorage [Y, X, Z] = (GameObject)Instantiate (
 								Boxpre [stage [Y, X, Z] - 1],
 								new Vector3 ((float)X, (float)Y, (float)Z),
-								Quaternion.identity);
+								flooa.transform.rotation);
 							BoxStorage[Y,X,Z].transform.parent = flooa.transform;
+							BoxStorage[Y,X,Z].transform.localPosition = defaltSet + new Vector3((float)X,(float)Y,(float)Z);
+							BoxStorage[Y,X,Z].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
 						}
 
 					}
@@ -764,8 +830,10 @@ public class MainGameSp : MonoBehaviour {
 						BoxStorage[0,X,Z] = (GameObject)Instantiate (
 							Boxpre[stage [0, X, Z]-1],
 							new Vector3((float)X,(float)0,(float)Z),
-							Quaternion.identity);
+							flooa.transform.rotation);
 						BoxStorage[0,X,Z].transform.parent = flooa.transform;
+						BoxStorage[0,X,Z].transform.localPosition = defaltSet + new Vector3((float)X,(float)0,(float)Z);
+						BoxStorage[0,X,Z].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
 					}
 						
 				}
@@ -799,19 +867,24 @@ public class MainGameSp : MonoBehaviour {
 		Destroy (BreakDown);
 	}
 
-	IEnumerator CRASHBOX(int X, int Y, int Z){
-		GameObject CRASH = (GameObject)Instantiate (Crash,new Vector3((float)X,(float)Y,(float)Z),Quaternion.identity);
-		CRASH.transform.Rotate(-90f,0f,0f);
+	IEnumerator CRASHBOX(int X, int Y, int Z, int i){
+		GameObject CRASH = (GameObject)Instantiate (Crash[i]);
+		CRASH.transform.position = BoxStorage [Y, X, Z].transform.position;
 		yield return new WaitForSeconds (0.8f);
 		Destroy (CRASH);
 	}
 
 	IEnumerator SetingFLASH(){
-		GameObject[] FLASH = new GameObject[2];
+		float Cx=Camera.main.transform.position.x;
+		float Cy=Camera.main.transform.position.y;
+		float Cz=Camera.main.transform.position.z;
+		Camera.main.transform.position = new Vector3(Cx,Cy+Random.Range(-0.05f,0.05f),Cz+Random.Range(-0.05f,0.05f));
+/*		GameObject[] FLASH = new GameObject[2];
 		FLASH[0] = (GameObject)Instantiate (
 			setflash,
 			new Vector3 ((float)posX, (float)posY, (float)posZ),
 			Quaternion.identity);
+		
 		FLASH[1] = (GameObject)Instantiate (
 			setflash,
 			new Vector3 ((float)posX, (float)posY, (float)posZ)+ setB [makerSpin],
@@ -819,6 +892,9 @@ public class MainGameSp : MonoBehaviour {
 		yield return new WaitForSeconds (0.8f);
 		Destroy (FLASH[0]);
 		Destroy (FLASH[1]);
+		*/
+		yield return new WaitForSeconds (0.01f);
+		Camera.main.transform.position = new Vector3(Cx,Cy,Cz);
 	}
 	void DelWhiteLevel(){
 		for (int X = 0; X < 7; X++) {
@@ -834,5 +910,3 @@ public class MainGameSp : MonoBehaviour {
 
 }
 
-
-//爽快感がないってよ！もともと連鎖で見せるつもりだったのが消えたから底力見せてやれ！
