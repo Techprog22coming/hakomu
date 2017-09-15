@@ -149,8 +149,9 @@ public class MainGameSp : MonoBehaviour {
 							Boxpre [dropS [i,t-1] - 1],
 							new Vector3 (TurnTable.transform.position.x, TurnTable.transform.position.y, TurnTable.transform.position.z),
 							Quaternion.identity);
-						SetBoxcoler [i, t].transform.parent = TurnTable.transform;
-						SetBoxcoler [i, t].transform.localPosition = new Vector3 (0.125f - (2 * i * 0.125f), 0.136f + (0.04f + t * 0.27f), 0f);
+				//		SetBoxcoler [i, t].transform.parent = TurnTable.transform;
+						SetBoxcoler [i, t].transform.localPosition = new Vector3 (2f , 9.5f + (0.12f + t * 0.18f), 151.85f- (2 * i * 0.06f));
+						SetBoxcoler [i, t].transform.localScale = new Vector3 (0.001f,0.12f,0.12f);
 					} else {
 						SetBoxcoler [i, t] = (GameObject)Instantiate (
 							Boxpre [dropB [i] - 1],
@@ -158,6 +159,7 @@ public class MainGameSp : MonoBehaviour {
 							Quaternion.identity);
 						SetBoxcoler [i, t].transform.parent = TurnTable.transform;
 						SetBoxcoler [i, t].transform.localPosition = new Vector3 (0.125f - (2 * i * 0.125f), 0.136f , 0f);
+						SetBoxcoler [i, t].transform.localScale = new Vector3 (0.25f, 0.25f, 0.25f);
 						mark [i] = (GameObject)Instantiate (
 							BoxsetMark [dropB [i] - 1],
 							setB [i * 2],
@@ -165,7 +167,7 @@ public class MainGameSp : MonoBehaviour {
 						mark [i].transform.parent = flooa.transform;
 					}
 
-					SetBoxcoler [i, t].transform.localScale = new Vector3 (0.25f, 0.25f, 0.25f);
+
 					SetBoxcoler [i, t].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
 
 				}
@@ -187,8 +189,8 @@ public class MainGameSp : MonoBehaviour {
 
 		if (Droping) {//プレイヤーが操作しても大丈夫か確認
 			if (Input.GetButton ("Fire1")) {//マウスをクリックか画面をタップ中か確認 そのままだとスマホで不具合起こしそう
-				mark[0].SetActive(false);
-				mark[1].SetActive(false);
+//				mark[0].SetActive(false);
+//				mark[1].SetActive(false);
 				LookTower-=Input.GetAxis ("Mouse Y");//マウスを上下に動かす
 //				flooa.transform.Rotate (new Vector3 (0f, Input.GetAxis("Mouse X") * 5f, 0f));
 				if (LookTower < 0)LookTower = 0;
@@ -220,8 +222,8 @@ public class MainGameSp : MonoBehaviour {
 			} else {
 				Quaternion deltaflooa =flooa.transform.rotation;
 				TopCam.SetActive (false);
-				mark[0].SetActive(true);
-				mark[1].SetActive(true);
+//				mark[0].SetActive(true);
+//				mark[1].SetActive(true);
 				LookTower = 0;
 			//	flooa.transform.rotation =new Quaternion(deltaflooa.x,deltaflooa.y /( Time.deltaTime *3),deltaflooa.z,0);
 //				flooa.transform.rotation =new Quaternion(0,0,0,0);
@@ -248,7 +250,7 @@ public class MainGameSp : MonoBehaviour {
 		}
 		OjamaCount += Time.deltaTime;
 		if (ActiveComboStart) {
-//			ComboLimitCount += Time.deltaTime;
+			ComboLimitCount += Time.deltaTime;
 			if (ComboLimitCount > ComboLimiter) {
 				ActiveComboStart = false;
 				ActiveCombo = 0;
@@ -270,7 +272,7 @@ public class MainGameSp : MonoBehaviour {
 
 	void OnGUI() {
 		
-		GUI.Label (new Rect(120,10,200,30),stageTall + " Tall");
+//		GUI.Label (new Rect(120,10,200,30),stageTall + " Tall");
 	}
 
 	void posSet() {
@@ -287,7 +289,7 @@ public class MainGameSp : MonoBehaviour {
 		if (Input.GetButton ("Jump")) {
 			
 			if (ComboLimitCount <= ComboLimiter) {
-				ComboLimitCount = ComboLimitCount + ComboLimiter / 3f ;
+				ComboLimitCount = ComboLimitCount + ComboLimiter / 5f ;
 			}
 
 				switch (makerTa) {
@@ -531,8 +533,9 @@ public class MainGameSp : MonoBehaviour {
 							Boxpre [dropS [i,t-1] - 1],
 							new Vector3 (TurnTable.transform.position.x, TurnTable.transform.position.y, TurnTable.transform.position.z),
 							Quaternion.identity);
-						SetBoxcoler [i, t].transform.parent = TurnTable.transform;
-						SetBoxcoler [i, t].transform.localPosition = new Vector3 (0.125f - (2 * i * 0.125f), 0.136f + (0.04f + t * 0.27f), 0f);
+//						SetBoxcoler [i, t].transform.parent = TurnTable.transform;
+						SetBoxcoler [i, t].transform.localPosition = new Vector3 (2f , 9.5f + (0.12f + t * 0.18f), 151.85f- (2 * i * 0.06f));
+						SetBoxcoler [i, t].transform.localScale = new Vector3 (0.001f, 0.12f, 0.12f);
 					} else {
 						SetBoxcoler [i, t] = (GameObject)Instantiate (
 							Boxpre [dropB [i] - 1],
@@ -540,8 +543,9 @@ public class MainGameSp : MonoBehaviour {
 							Quaternion.identity);
 						SetBoxcoler [i, t].transform.parent = TurnTable.transform;
 						SetBoxcoler [i, t].transform.localPosition = new Vector3 (0.125f - (2 * i * 0.125f), 0.136f , 0f);
+						SetBoxcoler [i, t].transform.localScale = new Vector3 (0.25f, 0.25f, 0.25f);
 					}
-					SetBoxcoler [i, t].transform.localScale = new Vector3 (0.25f, 0.25f, 0.25f);
+
 					SetBoxcoler [i, t].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
 				}
 			}
@@ -721,9 +725,9 @@ public class MainGameSp : MonoBehaviour {
 					}
 				}
 
-				scoreCount =(int)((DoubleRate * 30f * scoreRate + scoreCount) * scoreComboRate);
+				scoreCount =(int)((DoubleRate * 10f * scoreRate) * scoreComboRate) + scoreCount;
 				for(int i = 0;i<sCt;i++){
-					scoreComboRate = scoreComboRate * 1.01f;
+					scoreComboRate = scoreComboRate + 1.01f;
 				}
 
 

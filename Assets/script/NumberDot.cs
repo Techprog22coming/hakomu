@@ -19,7 +19,7 @@ public class NumberDot : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Field.ActiveCombo > 0) {
+		if (MainGameSp.ActiveCombo > 0) {
 			if (ComboGet != MainGameSp.ActiveCombo) {
 				set10 = MainGameSp.ActiveCombo / 10;
 				set01 = MainGameSp.ActiveCombo % 10;
