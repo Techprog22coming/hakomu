@@ -29,12 +29,18 @@ public class MainGameSp : MonoBehaviour {
 
 	GameObject flooa;
 
+	GameObject modeChecker;
+
 	GameObject TurnTable;//タンテイボウ。これから落とす箱の色がここで回る？？？
 
 
 	public GameObject setflash;
 	public GameObject[] Crash; //クラアアアアアアアアアッシュ！！！！！箱が弾けるエフェクト！！！
+	public GameObject Bubble;
 	public Material[] CrashMat;
+	public GameObject[] Fallpati;
+
+
 
 	public GameObject UIBar;
 
@@ -115,11 +121,14 @@ public class MainGameSp : MonoBehaviour {
 		TurnTable = GameObject.Find ("Tableup");
 		GameoverUI = GameObject.Find ("GAMEOVERui");
 		flooa = GameObject.Find ("flooa");
+		modeChecker = GameObject.Find ("Imageground");
 
 		TopCam = GameObject.Find ("TopCamera");
 		TopCam.SetActive (false);
 
 		CameraTall = TopCam.transform.position.y;
+
+		modeChecker.SetActive (false);
 
 		GameoverUI.SetActive (false);
 
@@ -150,8 +159,9 @@ public class MainGameSp : MonoBehaviour {
 							new Vector3 (TurnTable.transform.position.x, TurnTable.transform.position.y, TurnTable.transform.position.z),
 							Quaternion.identity);
 				//		SetBoxcoler [i, t].transform.parent = TurnTable.transform;
-						SetBoxcoler [i, t].transform.localPosition = new Vector3 (2f , 9.5f + (0.12f + t * 0.18f), 151.85f- (2 * i * 0.06f));
-						SetBoxcoler [i, t].transform.localScale = new Vector3 (0.001f,0.12f,0.12f);
+						SetBoxcoler [i, t].transform.localPosition = new Vector3 (1.6f , 9.3f + (0.12f + t * 0.18f), 152f- (2 * i * 0.07f));
+						SetBoxcoler [i, t].transform.localScale = new Vector3 (0.12f,0.12f,0.12f);
+						SetBoxcoler [i, t].transform.localRotation = new Quaternion (0.0f, 25.0f, 0.0f, 0.0f);
 					} else {
 						SetBoxcoler [i, t] = (GameObject)Instantiate (
 							Boxpre [dropB [i] - 1],
@@ -160,6 +170,7 @@ public class MainGameSp : MonoBehaviour {
 						SetBoxcoler [i, t].transform.parent = TurnTable.transform;
 						SetBoxcoler [i, t].transform.localPosition = new Vector3 (0.125f - (2 * i * 0.125f), 0.136f , 0f);
 						SetBoxcoler [i, t].transform.localScale = new Vector3 (0.25f, 0.25f, 0.25f);
+						SetBoxcoler [i, t].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
 						mark [i] = (GameObject)Instantiate (
 							BoxsetMark [dropB [i] - 1],
 							setB [i * 2],
@@ -168,7 +179,7 @@ public class MainGameSp : MonoBehaviour {
 					}
 
 
-					SetBoxcoler [i, t].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
+
 
 				}
 			}
@@ -189,6 +200,7 @@ public class MainGameSp : MonoBehaviour {
 
 		if (Droping) {//プレイヤーが操作しても大丈夫か確認
 			if (Input.GetButton ("Fire1")) {//マウスをクリックか画面をタップ中か確認 そのままだとスマホで不具合起こしそう
+				modeChecker.SetActive(true);
 //				mark[0].SetActive(false);
 //				mark[1].SetActive(false);
 				LookTower-=Input.GetAxis ("Mouse Y");//マウスを上下に動かす
@@ -197,7 +209,8 @@ public class MainGameSp : MonoBehaviour {
 				if (LookTower > 12)LookTower = 12;
 				if(Input.GetAxisRaw ("Vertical") > 0){
 					TopCam.SetActive (true);
-				}else{
+				}
+				if(Input.GetAxisRaw ("Vertical") < 0){
 					TopCam.SetActive (false);
 				}
 
@@ -220,8 +233,9 @@ public class MainGameSp : MonoBehaviour {
 				}
 
 			} else {
+				modeChecker.SetActive (false);
 				Quaternion deltaflooa =flooa.transform.rotation;
-				TopCam.SetActive (false);
+//				TopCam.SetActive (false);
 //				mark[0].SetActive(true);
 //				mark[1].SetActive(true);
 				LookTower = 0;
@@ -305,7 +319,7 @@ public class MainGameSp : MonoBehaviour {
 							BoxStorage[i,posX,posZ].transform.parent = flooa.transform;
 							BoxStorage[i,posX,posZ].transform.localPosition = defaltSet + new Vector3((float)posX,(float)i,(float)posZ);
 							BoxStorage[i,posX,posZ].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
-
+							StartCoroutine(SetingFLASH(i,posX,posZ,dropB[0]-1));
 							break;
 						}
 					}
@@ -321,6 +335,7 @@ public class MainGameSp : MonoBehaviour {
 							BoxStorage[i,posX,posZ].transform.parent = flooa.transform;
 							BoxStorage[i,posX,posZ].transform.localPosition = defaltSet + new Vector3((float)posX,(float)i,(float)posZ);
 							BoxStorage[i,posX,posZ].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
+							StartCoroutine(SetingFLASH(i,posX,posZ,dropB[1]-1));
 							break;
 						}
 					}
@@ -338,6 +353,7 @@ public class MainGameSp : MonoBehaviour {
 							BoxStorage[i,posX,posZ].transform.parent = flooa.transform;
 							BoxStorage[i,posX,posZ].transform.localPosition = defaltSet + new Vector3((float)posX,(float)i,(float)posZ);
 							BoxStorage[i,posX,posZ].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
+							StartCoroutine(SetingFLASH(i,posX,posZ,dropB[1]-1));
 							break;
 						}
 					}
@@ -353,6 +369,7 @@ public class MainGameSp : MonoBehaviour {
 							BoxStorage[i,posX,posZ].transform.parent = flooa.transform;
 							BoxStorage[i,posX,posZ].transform.localPosition = defaltSet + new Vector3((float)posX,(float)i,(float)posZ);
 							BoxStorage[i,posX,posZ].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
+							StartCoroutine(SetingFLASH(i,posX,posZ,dropB[0]-1));
 							break;
 						}
 					}
@@ -371,6 +388,7 @@ public class MainGameSp : MonoBehaviour {
 							BoxStorage[i,posX,posZ].transform.parent = flooa.transform;
 							BoxStorage[i,posX,posZ].transform.localPosition = defaltSet + new Vector3((float)posX,(float)i,(float)posZ);
 							BoxStorage[i,posX,posZ].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
+							StartCoroutine(SetingFLASH(i,posX,posZ,dropB[0]-1));
 							break;
 						}
 					}
@@ -386,6 +404,7 @@ public class MainGameSp : MonoBehaviour {
 							BoxStorage[i,posX+makerLim[makerSpin,0],posZ+makerLim[makerSpin,1]].transform.parent = flooa.transform;
 							BoxStorage[i,posX+makerLim[makerSpin,0],posZ+makerLim[makerSpin,1]].transform.localPosition = defaltSet + new Vector3((float)posX+makerLim[makerSpin,0],(float)i,(float)posZ+makerLim[makerSpin,1]);
 							BoxStorage[i,posX+makerLim[makerSpin,0],posZ+makerLim[makerSpin,1]].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
+							StartCoroutine(SetingFLASH(i,posX+makerLim[makerSpin,0],posZ+makerLim[makerSpin,1],dropB[1]-1));
 							break;
 						}
 					}
@@ -534,8 +553,9 @@ public class MainGameSp : MonoBehaviour {
 							new Vector3 (TurnTable.transform.position.x, TurnTable.transform.position.y, TurnTable.transform.position.z),
 							Quaternion.identity);
 //						SetBoxcoler [i, t].transform.parent = TurnTable.transform;
-						SetBoxcoler [i, t].transform.localPosition = new Vector3 (2f , 9.5f + (0.12f + t * 0.18f), 151.85f- (2 * i * 0.06f));
-						SetBoxcoler [i, t].transform.localScale = new Vector3 (0.001f, 0.12f, 0.12f);
+						SetBoxcoler [i, t].transform.localPosition = new Vector3 (1.6f , 9.3f + (0.12f + t * 0.18f), 152f- (2 * i * 0.07f));
+						SetBoxcoler [i, t].transform.localScale = new Vector3 (0.12f, 0.12f, 0.12f);
+						SetBoxcoler [i, t].transform.localRotation = new Quaternion (0.0f, 25.0f, 0.0f, 0.0f);
 					} else {
 						SetBoxcoler [i, t] = (GameObject)Instantiate (
 							Boxpre [dropB [i] - 1],
@@ -544,9 +564,8 @@ public class MainGameSp : MonoBehaviour {
 						SetBoxcoler [i, t].transform.parent = TurnTable.transform;
 						SetBoxcoler [i, t].transform.localPosition = new Vector3 (0.125f - (2 * i * 0.125f), 0.136f , 0f);
 						SetBoxcoler [i, t].transform.localScale = new Vector3 (0.25f, 0.25f, 0.25f);
+						SetBoxcoler [i, t].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
 					}
-
-					SetBoxcoler [i, t].transform.localRotation = new Quaternion (0.0f, 0.0f, 0.0f, 0.0f);
 				}
 			}
 		}
@@ -561,7 +580,8 @@ public class MainGameSp : MonoBehaviour {
 			Quaternion.identity);
 		mark [0].transform.parent = flooa.transform;
 		mark [1].transform.parent = flooa.transform;
-		StartCoroutine("SetingFLASH");
+
+		StartCoroutine ("SyeikuCamera");
 	}
 
 	void markTrace(){
@@ -718,6 +738,7 @@ public class MainGameSp : MonoBehaviour {
 								DoubleRate = DoubleRate * DoubleDelRate;
 
 								BoxStorage[Y,X,Z].GetComponent<Renderer>().material=CrashMat[stage[Y,X,Z]-1];
+								BoxStorage[Y,X,Z].layer = 10;
 								DelBox++;
 								sCt++;
 							} 
@@ -764,6 +785,7 @@ public class MainGameSp : MonoBehaviour {
 				if(DelBox >= DelBoxLevel * 50){
 					StartCoroutine("partFire");
 					DelBoxLevel++;
+
 					DelWhiteLevel();
 				}
 
@@ -852,7 +874,7 @@ public class MainGameSp : MonoBehaviour {
 						stageTall++;
 						x = 7;
 						break;
-					}	
+					}
 				}
 			}
 		}
@@ -873,38 +895,42 @@ public class MainGameSp : MonoBehaviour {
 
 	IEnumerator CRASHBOX(int X, int Y, int Z, int i){
 		GameObject CRASH = (GameObject)Instantiate (Crash[i]);
+		GameObject BUBBLE = (GameObject)Instantiate (Bubble);
 		CRASH.transform.position = BoxStorage [Y, X, Z].transform.position;
+		BUBBLE.transform.position = BoxStorage [Y, X, Z].transform.position;
 		yield return new WaitForSeconds (0.8f);
 		Destroy (CRASH);
+		Destroy (BUBBLE);
 	}
 
-	IEnumerator SetingFLASH(){
+	IEnumerator SetingFLASH(int Y,int X,int Z,int i){
+		GameObject FLASH ;
+		GameObject FALL;
+		FLASH = (GameObject)Instantiate (setflash);
+		FALL = (GameObject)Instantiate (Fallpati[i]);
+//		FLASH.transform.Rotate(new Vector3 (-90f, 0f, 0f));
+		FLASH.transform.position = BoxStorage[Y,X,Z].transform.position;
+		FALL.transform.position = BoxStorage[Y,X,Z].transform.position/* + new Vector3(0.0f,7.0f,0.0f)*/;
+		yield return new WaitForSeconds (0.8f);
+		Destroy (FLASH);
+//		Destroy (FALL);
+	}
+
+	IEnumerator SyeikuCamera(){
 		float Cx=Camera.main.transform.position.x;
 		float Cy=Camera.main.transform.position.y;
 		float Cz=Camera.main.transform.position.z;
-		Camera.main.transform.position = new Vector3(Cx,Cy+Random.Range(-0.05f,0.05f),Cz+Random.Range(-0.05f,0.05f));
-/*		GameObject[] FLASH = new GameObject[2];
-		FLASH[0] = (GameObject)Instantiate (
-			setflash,
-			new Vector3 ((float)posX, (float)posY, (float)posZ),
-			Quaternion.identity);
-		
-		FLASH[1] = (GameObject)Instantiate (
-			setflash,
-			new Vector3 ((float)posX, (float)posY, (float)posZ)+ setB [makerSpin],
-			Quaternion.identity);
-		yield return new WaitForSeconds (0.8f);
-		Destroy (FLASH[0]);
-		Destroy (FLASH[1]);
-		*/
+		Camera.main.transform.position = new Vector3(Cx,Cy+Random.Range(-0.05f,0.05f),Cz);
 		yield return new WaitForSeconds (0.01f);
 		Camera.main.transform.position = new Vector3(Cx,Cy,Cz);
 	}
 	void DelWhiteLevel(){
-		for (int X = 0; X < 7; X++) {
-			for (int Z = 0; Z < 7; Z++) {
-				if (stage [0, X, Z] == 5) {
-					stage [0, X, Z] = 0;
+		for (int Y = 0; Y < 13; Y++) {
+			for (int X = 0; X < 7; X++) {
+				for (int Z = 0; Z < 7; Z++) {
+					if (stage [Y, X, Z] == 5) {
+						stage [Y, X, Z] = 0;
+					}
 				}
 			}
 		}
